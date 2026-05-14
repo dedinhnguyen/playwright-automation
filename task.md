@@ -1,0 +1,40 @@
+# Playwright Framework Tasks
+
+- [x] Project Initialization
+    - [x] Create `package.json` with dependencies
+    - [x] Create `tsconfig.json`
+    - [x] Configure ESLint and Prettier
+    - [x] Create `.gitignore`
+- [x] Core Module Implementation
+    - [x] Base Logger (`src/utils/Logger.ts`)
+    - [x] Environment Helper (`src/utils/Env.ts`)
+    - [x] Web Core (`src/core/web/BasePage.ts`)
+    - [x] API Core (`src/core/api/BaseAPI.ts`)
+    - [x] Mobile Core (`src/core/mobile/MobileBase.ts`)
+    - [x] Desktop Core (`src/core/app/ElectronBase.ts`)
+    - [x] Database Core (`src/core/database/DatabaseManager.ts`)
+- [x] Configuration
+    - [x] `playwright.config.ts`
+    - [x] Global setup/teardown for DB
+- [x] Page Objects & Hybrid Tests
+    - [x] Web Page Objects (Register)
+    - [x] Hybrid Test (Web -> API -> DB)
+- [x] Documentation & CI/CD
+    - [x] Root `README.md`
+    - [x] Module-specific `README.md` (Web, API, DB)
+    - [x] Advanced `Jenkinsfile` (DB logic, Docker-compose)
+- [x] Verification
+    - [x] Run hybrid tests
+    - [x] Verify Allure report
+- [x] OrangeHRM Test Suite
+    - [x] Create `LoginPage.ts`
+    - [x] Create `DashboardPage.ts`
+    - [x] Create `PIMPage.ts`
+    - [x] Create `orangeHRM.spec.ts`
+    - [x] Verify scenarios (Login, Hybrid Add Employee)
+- [x] Architectural Refactoring
+    - [x] Refactor `BasePage.ts` with auto-screenshots
+    - [x] Update `playwright.config.ts` for visual execution
+    - [x] Implement `OrangeHRMFlows.ts`
+    - [x] Implement 5 architectural test cases
+    - [x] Verify visual logging and multi-platform sanity
