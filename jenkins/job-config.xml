@@ -1,0 +1,64 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<flow-definition plugin="workflow-job">
+  <description>Playwright E2E Test Suite - OrangeHRM Automation</description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps">
+    <script>
+pipeline {
+    agent {
+        node {
+            label ''
+            customWorkspace 'E:\\Automation'
+        }
+    }
+
+    tools {
+        nodejs 'NodeJS'
+    }
+
+    environment {
+        CI = 'true'
+    }
+
+    stages {
+        stage('Install Dependencies') {
+            steps {
+                bat 'npm ci || npm install'
+                bat 'npx playwright install --with-deps chromium'
+            }
+        }
+
+        stage('Run E2E Tests') {
+            steps {
+                bat 'npx playwright test --project=chromium'
+            }
+        }
+
+        stage('Generate Allure Report') {
+            steps {
+                bat 'npx allure generate allure-results --clean -o allure-report || echo Allure generation skipped'
+            }
+        }
+    }
+
+    post {
+        always {
+            publishHTML(target: [allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright Report'])
+            allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+            archiveArtifacts artifacts: 'test-results/**/*', allowEmptyArchive: true
+        }
+        success {
+            echo 'All tests passed successfully!'
+        }
+        failure {
+            echo 'Some tests failed. Please check the reports.'
+        }
+    }
+}
+    </script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
