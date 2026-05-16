@@ -6,6 +6,7 @@
   "scripts": {
     "test": "npx playwright test",
     "test:custom": "node scripts/run-test.js",
+    "test:suite": "npx playwright test src/tests/web/suite",
     "test:web": "npx playwright test --project=chromium",
     "test:api": "npx playwright test --project=api",
     "test:mobile": "npx playwright test --project='Mobile Chrome' --project='Mobile Safari'",
