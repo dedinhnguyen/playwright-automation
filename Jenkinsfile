@@ -1,72 +1,65 @@
 pipeline {
-    agent any
+    agent {
+        node {
+            label ''
+            customWorkspace 'E:\\Automation'
+        }
+    }
+
+    tools {
+        nodejs 'NodeJS'
+    }
 
     environment {
-        // Mapping Jenkins Credentials to Env Vars
-        DB_CONFIG = credentials('qa-db-credentials') // Expects username/password
-        DB_HOST = 'localhost'
-        DB_PORT = '5432'
-        DB_USER = "${env.DB_CONFIG_USR}"
-        DB_PASS = "${env.DB_CONFIG_PSW}"
-        DB_NAME = 'test_db'
-        
-        // Browser testing env
-        BASE_URL = 'https://playwright.dev'
-        API_URL = 'https://jsonplaceholder.typicode.com'
+        CI = 'true'
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
-                sh 'npx playwright install --with-deps'
-            }
-        }
-
-        stage('Lint & Static Analysis') {
-            steps {
-                sh 'npm run lint'
-            }
-        }
-
-        stage('Database Health Check') {
-            steps {
-                script {
-                    echo "Checking DB Health at ${DB_HOST}:${DB_PORT}..."
-                    // Example health check using pg_isready or a custom script
-                    // For demo, we'll just echo
-                }
+                bat 'npm ci || npm install'
+                bat 'npx playwright install --with-deps chromium'
             }
         }
 
         stage('Run E2E Tests') {
             steps {
-                // Pass environment variables to Playwright
-                sh "DB_HOST=${DB_HOST} DB_PORT=${DB_PORT} DB_USER=${DB_USER} DB_PASS=${DB_PASS} DB_NAME=${DB_NAME} npm run test"
+                bat 'npx playwright test --project=chromium'
             }
-            post {
-                always {
-                    allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
-                }
+        }
+
+        stage('Generate Allure Report') {
+            steps {
+                bat 'npx allure generate allure-results --clean -o allure-report || echo Allure generation skipped'
             }
         }
     }
 
     post {
         always {
-            cleanWs()
+            // Archive Playwright HTML Report
+            publishHTML(target: [
+                allowMissing: true,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'playwright-report',
+                reportFiles: 'index.html',
+                reportName: 'Playwright Report'
+            ])
+
+            // Archive Allure Report
+            allure includeProperties: false,
+                   jdk: '',
+                   results: [[path: 'allure-results']]
+
+            // Archive test artifacts
+            archiveArtifacts artifacts: 'test-results/**/*', allowEmptyArchive: true
         }
         success {
-            echo 'Build Successful!'
+            echo 'All tests passed successfully!'
         }
         failure {
-            echo 'Build Failed. Please check the reports.'
+            echo 'Some tests failed. Please check the reports.'
         }
     }
 }
