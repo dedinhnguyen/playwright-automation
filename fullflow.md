@@ -84,12 +84,15 @@ Sau khi viết xong, bạn cần chạy xem test case của mình có pass hay f
   ```
   *Mặc định hệ thống sẽ mở trình duyệt lên để bạn nhìn thấy các thao tác tự động đang diễn ra (Headed mode).*
 
-- **Chạy toàn bộ Test Suite (Nhiều file)**:
+- **Chạy toàn bộ Folder Tests**:
   Khi bạn đã chắc chắn script của mình chạy ổn, bạn có thể kiểm tra xem nó có phá hỏng các script khác trong dự án hay không bằng cách chạy toàn bộ test:
   ```bash
   npm run test
   ```
-
+- **Chạy toàn bộ Test Suite (Nhiều file)**:
+  ```bash
+npx playwright test src/tests/web/suite
+```
 - **Chạy với 1 trình duyệt cụ thể** (VD Chỉ chạy Chrome):
   ```bash
   npx playwright test --project=chromium
