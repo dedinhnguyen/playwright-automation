@@ -2,7 +2,7 @@ pipeline {
     agent {
         node {
             label ''
-            customWorkspace 'E:\\Automation'
+            customWorkspace 'E:\\Testing\\2-automation-testing\\playwright-automation'
         }
     }
 
